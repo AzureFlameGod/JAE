@@ -13,7 +13,7 @@
 
 </head>
 <body>
-
+        <div id="line"></div>
 </body>
 </html>
 
@@ -24,6 +24,7 @@
                 return row[key];
             });
         }
+
 
         var names           = rows[2];
         var dates           = unpack(rows, 'Access Point ID').splice(4,151);
@@ -54,8 +55,31 @@
         var gateway         = unpack(rows, '30').splice(4, 151);
 
 
-        console.log(unpack(rows, '15'));
-        console.log(bachman);
+        var trace1 = {
+
+            type: 'scatter',
+            mode: 'lines',
+            name: 'Bachman',
+            x: dates,
+            y: bachman,
+        };
+
+        var trace2 = {
+
+            type: 'scatter',
+            mode: 'lines',
+            name: 'Kuykendall North',
+            x: dates,
+            y: kuykendallNorth,
+
+        };
+
+        var layout = {
+          title: 'Test'
+        };
+        data = [trace1, trace2];
+
+        Plotly.newPlot('line', data, layout, {responsive: true});
 
         //console.log(rows[6]);
         //iterate by location
