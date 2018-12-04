@@ -1,0 +1,223 @@
+<!DOCTYPE HTML>
+<html>
+
+<head>
+    <meta content="text/html;charset=utf-8" http-equiv="Content-Type">
+    <meta content="utf-8" http-equiv="encoding">
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <script src ="https://cdnjs.cloudflare.com/ajax/libs/vis/4.21.0/vis.min.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/vis/4.21.0/vis.min.css" rel="stylesheet" type="text/css"/>
+    <title>Graph2d | Streaming data</title>
+
+    <style type="text/css">
+        body, html, select {
+            font: 10pt sans-serif;
+        }
+    </style>
+
+
+</head>
+<body>
+<h2>Graph2d | Streaming data</h2>
+<p style="max-width: 700px;">
+    This example demonstrates how to apply streaming data input to the Graph2d. The example shows two different ways to let the window move along with the new data, and there are more strategies for that. Note also that it is possible to disable moving and/or zooming the graph by setting options <code>moveable</code> and <code>zoomable</code> false.
+</p>
+
+<p>
+    <label for="strategy">Strategy:</label>
+    <select id="strategy">
+        <option value="continuous" selected>Continuous (CPU intensive)</option>
+        <option value="discrete">Discrete</option>
+        <option value="static">Static</option>
+    </select>
+    <select id="building">
+        <option value="bachman">bach</option>
+    </select>
+</p>
+
+<div id="visualization"></div>
+
+<script type="text/javascript">
+
+    //I'm using globals. Forgive me for I have sinned
+    var counter = 0;
+    Plotly.d3.csv("https://raw.githubusercontent.com/ManoaDataVisualizationProject/JAE/master/UHWeekXL.csv", function(err, rows) {
+        function unpack(rows, key) {
+            return rows.map(function (row) {
+                return row[key];
+            });
+        }
+
+
+        var names = rows[2];
+        var dates = unpack(rows, 'Access Point ID').splice(4, 151);
+        window.bachman = unpack(rows, '1').splice(4, 151).map(function (x) {
+            return parseInt(x, 10)
+        });
+        var kuykendallNorth = unpack(rows, '2').splice(4, 151).map(function (x) {
+            return parseInt(x, 10)
+        });
+        var kuykendallWest = unpack(rows, '3').splice(4, 151).map(function (x) {
+            return parseInt(x, 10)
+        });
+        var geophysics = unpack(rows, '4').splice(4, 151).map(function (x) {
+            return parseInt(x, 10)
+        });
+        var physical = unpack(rows, '5').splice(4, 151).map(function (x) {
+            return parseInt(x, 10)
+        });
+        var sinclair = unpack(rows, '6').splice(4, 151).map(function (x) {
+            return parseInt(x, 10)
+        });
+        var admin = unpack(rows, '7').splice(4, 151).map(function (x) {
+            return parseInt(x, 10)
+        });
+        var parking = unpack(rows, '8').splice(4, 151).map(function (x) {
+            return parseInt(x, 10)
+        });
+        var crawford = unpack(rows, '9').splice(4, 151).map(function (x) {
+            return parseInt(x, 10)
+        });
+        var hawaii = unpack(rows, '10').splice(4, 151).map(function (x) {
+            return parseInt(x, 10)
+        });
+        var qlcc = unpack(rows, '11').splice(4, 151).map(function (x) {
+            return parseInt(x, 10)
+        });
+        var kennedy = unpack(rows, '12').splice(4, 151).map(function (x) {
+            return parseInt(x, 10)
+        });
+        var hamilton = unpack(rows, '13').splice(4, 151).map(function (x) {
+            return parseInt(x, 10)
+        });
+        var keller = unpack(rows, '14').splice(4, 151).map(function (x) {
+            return parseInt(x, 10)
+        });
+        var webster = unpack(rows, '16').splice(4, 151).map(function (x) {
+            return parseInt(x, 10)
+        });
+        var eastWest = unpack(rows, '17').splice(4, 151).map(function (x) {
+            return parseInt(x, 10)
+        });
+        var oceanography = unpack(rows, '18').splice(4, 151).map(function (x) {
+            return parseInt(x, 10)
+        });
+        var watanabe = unpack(rows, '20').splice(4, 151).map(function (x) {
+            return parseInt(x, 10)
+        });
+        var art = unpack(rows, '21').splice(4, 151).map(function (x) {
+            return parseInt(x, 10)
+        });
+        var lawSchool = unpack(rows, '24').splice(4, 151).map(function (x) {
+            return parseInt(x, 10)
+        });
+        var lawLibrary = unpack(rows, '25').splice(4, 151).map(function (x) {
+            return parseInt(x, 10)
+        });
+        var koreanStudies = unpack(rows, '26').splice(4, 151).map(function (x) {
+            return parseInt(x, 10)
+        });
+        var recCenter = unpack(rows, '27').splice(4, 151).map(function (x) {
+            return parseInt(x, 10)
+        });
+        var campusCenter = unpack(rows, '29').splice(4, 151).map(function (x) {
+            return parseInt(x, 10)
+        });
+        var gateway = unpack(rows, '30').splice(4, 151).map(function (x) {
+            return parseInt(x, 10)
+        });
+        var DELAY = 1000; // delay in ms to add new data points
+
+        var strategy = document.getElementById('strategy');
+        var building = document.getElementById('building');
+
+        // create a graph2d with an (currently empty) dataset
+        var container = document.getElementById('visualization');
+        var dataset = new vis.DataSet();
+
+        var options = {
+            start: vis.moment().add(-30, 'seconds'), // changed so its faster
+            end: vis.moment(),
+            dataAxis: {
+                left: {
+                    range: {
+                        min: -1000, max: 1000
+                    }
+                }
+            },
+            drawPoints: {
+                style: 'circle' // square, circle
+            },
+            shaded: {
+                orientation: 'bottom' // top, bottom
+            }
+        };
+        var graph2d = new vis.Graph2d(container, dataset, options);
+
+        // a function to generate data points
+        function y(x) {
+            console.log(bachman[counter]);
+            counter++;
+            return Number(bachman[counter]);
+        }
+
+        function renderStep() {
+            // move the window (you can think of different strategies).
+            var now = vis.moment();
+            var range = graph2d.getWindow();
+            var interval = range.end - range.start;
+            switch (strategy.value) {
+                case 'continuous':
+                    // continuously move the window
+                    graph2d.setWindow(now - interval, now, {animation: false});
+                    requestAnimationFrame(renderStep);
+                    break;
+
+                case 'discrete':
+                    graph2d.setWindow(now - interval, now, {animation: false});
+                    setTimeout(renderStep, DELAY);
+                    break;
+
+                default: // 'static'
+                    // move the window 90% to the left when now is larger than the end of the window
+                    if (now > range.end) {
+                        graph2d.setWindow(now - 0.1 * interval, now + 0.9 * interval);
+                    }
+                    setTimeout(renderStep, DELAY);
+                    break;
+            }
+        }
+
+        renderStep();
+
+        /**
+         * Add a new datapoint to the graph
+         */
+        function addDataPoint(bachman) {
+            // add a new data point to the dataset
+            var now = vis.moment();
+            var yAxis = y(counter);
+            dataset.add({
+                x: now,
+                y: yAxis
+            });
+
+            // remove all data points which are no longer visible
+            var range = graph2d.getWindow();
+            var interval = range.end - range.start;
+            var oldIds = dataset.getIds({
+                filter: function (item) {
+                    return item.x < range.start - interval;
+                }
+            });
+            dataset.remove(oldIds);
+
+            setTimeout(addDataPoint, DELAY);
+        }
+
+        console.log(typeof bachman);
+        addDataPoint(bachman);
+    })
+</script>
+</body>
+</html>
