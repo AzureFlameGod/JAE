@@ -31,7 +31,29 @@
         <option value="static">Static</option>
     </select>
     <select id="building">
-        <option value="bachman">bach</option>
+        <option value="bachman">Bachman</option>
+        <option value="kuykn">Kuykendall North</option>
+        <option value ="geophys">Geophysics</option>
+        <option value ="kuykw">Kuykendall West</option>
+        <option value ="kuykw">Kuykendall West</option>
+        <option value ="kuykw">Kuykendall West</option>
+        <option value ="kuykw">Kuykendall West</option>
+        <option value ="kuykw">Kuykendall West</option>
+        <option value ="kuykw">Kuykendall West</option>
+        <option value ="kuykw">Kuykendall West</option>
+        <option value ="kuykw">Kuykendall West</option>
+        <option value ="kuykw">Kuykendall West</option>
+        <option value ="kuykw">Kuykendall West</option>
+        <option value ="kuykw">Kuykendall West</option>
+        <option value ="kuykw">Kuykendall West</option>
+        <option value ="kuykw">Kuykendall West</option>
+        <option value ="kuykw">Kuykendall West</option>
+        <option value ="kuykw">Kuykendall West</option>
+        <option value ="kuykw">Kuykendall West</option>
+        <option value ="kuykw">Kuykendall West</option>
+        <option value ="kuykw">Kuykendall West</option>
+        <option value ="kuykw">Kuykendall West</option>
+        <option value ="kuykw">Kuykendall West</option>
     </select>
 </p>
 
@@ -41,6 +63,8 @@
 
     //I'm using globals. Forgive me for I have sinned
     var counter = 0;
+    var building = document.getElementById('building');
+
     Plotly.d3.csv("https://raw.githubusercontent.com/ManoaDataVisualizationProject/JAE/master/UHWeekXL.csv", function(err, rows) {
         function unpack(rows, key) {
             return rows.map(function (row) {
@@ -48,88 +72,88 @@
             });
         }
 
+        var buildingStream;
 
-        var names = rows[2];
-        var dates = unpack(rows, 'Access Point ID').splice(4, 151);
+        window.dates = unpack(rows, 'Access Point ID').splice(4, 151);
         window.bachman = unpack(rows, '1').splice(4, 151).map(function (x) {
             return parseInt(x, 10)
         });
-        var kuykendallNorth = unpack(rows, '2').splice(4, 151).map(function (x) {
+        window.kuykendallNorth = unpack(rows, '2').splice(4, 151).map(function (x) {
             return parseInt(x, 10)
         });
-        var kuykendallWest = unpack(rows, '3').splice(4, 151).map(function (x) {
+        window.kuykendallWest = unpack(rows, '3').splice(4, 151).map(function (x) {
             return parseInt(x, 10)
         });
-        var geophysics = unpack(rows, '4').splice(4, 151).map(function (x) {
+        window.geophysics = unpack(rows, '4').splice(4, 151).map(function (x) {
             return parseInt(x, 10)
         });
-        var physical = unpack(rows, '5').splice(4, 151).map(function (x) {
+        window.physical = unpack(rows, '5').splice(4, 151).map(function (x) {
             return parseInt(x, 10)
         });
-        var sinclair = unpack(rows, '6').splice(4, 151).map(function (x) {
+        window.sinclair = unpack(rows, '6').splice(4, 151).map(function (x) {
             return parseInt(x, 10)
         });
-        var admin = unpack(rows, '7').splice(4, 151).map(function (x) {
+        window.admin = unpack(rows, '7').splice(4, 151).map(function (x) {
             return parseInt(x, 10)
         });
-        var parking = unpack(rows, '8').splice(4, 151).map(function (x) {
+        window.parking = unpack(rows, '8').splice(4, 151).map(function (x) {
             return parseInt(x, 10)
         });
-        var crawford = unpack(rows, '9').splice(4, 151).map(function (x) {
+        window.crawford = unpack(rows, '9').splice(4, 151).map(function (x) {
             return parseInt(x, 10)
         });
-        var hawaii = unpack(rows, '10').splice(4, 151).map(function (x) {
+        window.hawaii = unpack(rows, '10').splice(4, 151).map(function (x) {
             return parseInt(x, 10)
         });
-        var qlcc = unpack(rows, '11').splice(4, 151).map(function (x) {
+        window.qlcc = unpack(rows, '11').splice(4, 151).map(function (x) {
             return parseInt(x, 10)
         });
-        var kennedy = unpack(rows, '12').splice(4, 151).map(function (x) {
+        window.kennedy = unpack(rows, '12').splice(4, 151).map(function (x) {
             return parseInt(x, 10)
         });
-        var hamilton = unpack(rows, '13').splice(4, 151).map(function (x) {
+        window.hamilton = unpack(rows, '13').splice(4, 151).map(function (x) {
             return parseInt(x, 10)
         });
-        var keller = unpack(rows, '14').splice(4, 151).map(function (x) {
+        window.keller = unpack(rows, '14').splice(4, 151).map(function (x) {
             return parseInt(x, 10)
         });
-        var webster = unpack(rows, '16').splice(4, 151).map(function (x) {
+        window.webster = unpack(rows, '16').splice(4, 151).map(function (x) {
             return parseInt(x, 10)
         });
-        var eastWest = unpack(rows, '17').splice(4, 151).map(function (x) {
+        window.eastWest = unpack(rows, '17').splice(4, 151).map(function (x) {
             return parseInt(x, 10)
         });
-        var oceanography = unpack(rows, '18').splice(4, 151).map(function (x) {
+        window.oceanography = unpack(rows, '18').splice(4, 151).map(function (x) {
             return parseInt(x, 10)
         });
-        var watanabe = unpack(rows, '20').splice(4, 151).map(function (x) {
+        window.watanabe = unpack(rows, '20').splice(4, 151).map(function (x) {
             return parseInt(x, 10)
         });
-        var art = unpack(rows, '21').splice(4, 151).map(function (x) {
+        window.art = unpack(rows, '21').splice(4, 151).map(function (x) {
             return parseInt(x, 10)
         });
-        var lawSchool = unpack(rows, '24').splice(4, 151).map(function (x) {
+        window.lawSchool = unpack(rows, '24').splice(4, 151).map(function (x) {
             return parseInt(x, 10)
         });
-        var lawLibrary = unpack(rows, '25').splice(4, 151).map(function (x) {
+        window.lawLibrary = unpack(rows, '25').splice(4, 151).map(function (x) {
             return parseInt(x, 10)
         });
-        var koreanStudies = unpack(rows, '26').splice(4, 151).map(function (x) {
+        window.koreanStudies = unpack(rows, '26').splice(4, 151).map(function (x) {
             return parseInt(x, 10)
         });
-        var recCenter = unpack(rows, '27').splice(4, 151).map(function (x) {
+        window.recCenter = unpack(rows, '27').splice(4, 151).map(function (x) {
             return parseInt(x, 10)
         });
-        var campusCenter = unpack(rows, '29').splice(4, 151).map(function (x) {
+        window.campusCenter = unpack(rows, '29').splice(4, 151).map(function (x) {
             return parseInt(x, 10)
         });
-        var gateway = unpack(rows, '30').splice(4, 151).map(function (x) {
+        window.gateway = unpack(rows, '30').splice(4, 151).map(function (x) {
             return parseInt(x, 10)
         });
         var DELAY = 1000; // delay in ms to add new data points
 
         var strategy = document.getElementById('strategy');
-        var building = document.getElementById('building');
+        console.log(building.value);
 
         // create a graph2d with an (currently empty) dataset
         var container = document.getElementById('visualization');
@@ -141,7 +165,7 @@
             dataAxis: {
                 left: {
                     range: {
-                        min: -1000, max: 1000
+                        min: 0, max: 1500
                     }
                 }
             },
@@ -156,9 +180,21 @@
 
         // a function to generate data points
         function y(x) {
-            console.log(bachman[counter]);
+            switch(building.value){
+                case 'bachman':
+                    buildingStream = bachman;
+                    break;
+                case 'kuykn':
+                    buildingStream = kuykendallNorth;
+            }
+            console.log(buildingStream)
+            console.log(buildingStream[counter]);
+
             counter++;
-            return Number(bachman[counter]);
+
+            if(counter === 147)
+                counter = 0;
+            return Number(buildingStream[counter]);
         }
 
         function renderStep() {
@@ -193,7 +229,7 @@
         /**
          * Add a new datapoint to the graph
          */
-        function addDataPoint(bachman) {
+        function addDataPoint() {
             // add a new data point to the dataset
             var now = vis.moment();
             var yAxis = y(counter);
@@ -215,8 +251,8 @@
             setTimeout(addDataPoint, DELAY);
         }
 
-        console.log(typeof bachman);
-        addDataPoint(bachman);
+
+        addDataPoint();
     })
 </script>
 </body>
