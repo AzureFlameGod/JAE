@@ -1,0 +1,259 @@
+<!DOCTYPE HTML>
+<html>
+
+<head>
+    <meta content="text/html;charset=utf-8" http-equiv="Content-Type">
+    <meta content="utf-8" http-equiv="encoding">
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <script src ="https://cdnjs.cloudflare.com/ajax/libs/vis/4.21.0/vis.min.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/vis/4.21.0/vis.min.css" rel="stylesheet" type="text/css"/>
+    <title>Graph2d | Streaming data</title>
+
+    <style type="text/css">
+        body, html, select {
+            font: 10pt sans-serif;
+        }
+    </style>
+
+
+</head>
+<body>
+<h2>Graph2d | Streaming data</h2>
+<p style="max-width: 700px;">
+    This example demonstrates how to apply streaming data input to the Graph2d. The example shows two different ways to let the window move along with the new data, and there are more strategies for that. Note also that it is possible to disable moving and/or zooming the graph by setting options <code>moveable</code> and <code>zoomable</code> false.
+</p>
+
+<p>
+    <label for="strategy">Strategy:</label>
+    <select id="strategy">
+        <option value="continuous" selected>Continuous (CPU intensive)</option>
+        <option value="discrete">Discrete</option>
+        <option value="static">Static</option>
+    </select>
+    <select id="building">
+        <option value="bachman">Bachman</option>
+        <option value="kuykn">Kuykendall North</option>
+        <option value ="geophys">Geophysics</option>
+        <option value ="kuykw">Kuykendall West</option>
+        <option value ="kuykw">Kuykendall West</option>
+        <option value ="kuykw">Kuykendall West</option>
+        <option value ="kuykw">Kuykendall West</option>
+        <option value ="kuykw">Kuykendall West</option>
+        <option value ="kuykw">Kuykendall West</option>
+        <option value ="kuykw">Kuykendall West</option>
+        <option value ="kuykw">Kuykendall West</option>
+        <option value ="kuykw">Kuykendall West</option>
+        <option value ="kuykw">Kuykendall West</option>
+        <option value ="kuykw">Kuykendall West</option>
+        <option value ="kuykw">Kuykendall West</option>
+        <option value ="kuykw">Kuykendall West</option>
+        <option value ="kuykw">Kuykendall West</option>
+        <option value ="kuykw">Kuykendall West</option>
+        <option value ="kuykw">Kuykendall West</option>
+        <option value ="kuykw">Kuykendall West</option>
+        <option value ="kuykw">Kuykendall West</option>
+        <option value ="kuykw">Kuykendall West</option>
+        <option value ="kuykw">Kuykendall West</option>
+    </select>
+</p>
+
+<div id="visualization"></div>
+
+<script type="text/javascript">
+
+    //I'm using globals. Forgive me for I have sinned
+    var counter = 0;
+    var building = document.getElementById('building');
+
+    Plotly.d3.csv("https://raw.githubusercontent.com/ManoaDataVisualizationProject/JAE/master/UHWeekXL.csv", function(err, rows) {
+        function unpack(rows, key) {
+            return rows.map(function (row) {
+                return row[key];
+            });
+        }
+
+        var buildingStream;
+
+        window.dates = unpack(rows, 'Access Point ID').splice(4, 151);
+        window.bachman = unpack(rows, '1').splice(4, 151).map(function (x) {
+            return parseInt(x, 10)
+        });
+        window.kuykendallNorth = unpack(rows, '2').splice(4, 151).map(function (x) {
+            return parseInt(x, 10)
+        });
+        window.kuykendallWest = unpack(rows, '3').splice(4, 151).map(function (x) {
+            return parseInt(x, 10)
+        });
+        window.geophysics = unpack(rows, '4').splice(4, 151).map(function (x) {
+            return parseInt(x, 10)
+        });
+        window.physical = unpack(rows, '5').splice(4, 151).map(function (x) {
+            return parseInt(x, 10)
+        });
+        window.sinclair = unpack(rows, '6').splice(4, 151).map(function (x) {
+            return parseInt(x, 10)
+        });
+        window.admin = unpack(rows, '7').splice(4, 151).map(function (x) {
+            return parseInt(x, 10)
+        });
+        window.parking = unpack(rows, '8').splice(4, 151).map(function (x) {
+            return parseInt(x, 10)
+        });
+        window.crawford = unpack(rows, '9').splice(4, 151).map(function (x) {
+            return parseInt(x, 10)
+        });
+        window.hawaii = unpack(rows, '10').splice(4, 151).map(function (x) {
+            return parseInt(x, 10)
+        });
+        window.qlcc = unpack(rows, '11').splice(4, 151).map(function (x) {
+            return parseInt(x, 10)
+        });
+        window.kennedy = unpack(rows, '12').splice(4, 151).map(function (x) {
+            return parseInt(x, 10)
+        });
+        window.hamilton = unpack(rows, '13').splice(4, 151).map(function (x) {
+            return parseInt(x, 10)
+        });
+        window.keller = unpack(rows, '14').splice(4, 151).map(function (x) {
+            return parseInt(x, 10)
+        });
+        window.webster = unpack(rows, '16').splice(4, 151).map(function (x) {
+            return parseInt(x, 10)
+        });
+        window.eastWest = unpack(rows, '17').splice(4, 151).map(function (x) {
+            return parseInt(x, 10)
+        });
+        window.oceanography = unpack(rows, '18').splice(4, 151).map(function (x) {
+            return parseInt(x, 10)
+        });
+        window.watanabe = unpack(rows, '20').splice(4, 151).map(function (x) {
+            return parseInt(x, 10)
+        });
+        window.art = unpack(rows, '21').splice(4, 151).map(function (x) {
+            return parseInt(x, 10)
+        });
+        window.lawSchool = unpack(rows, '24').splice(4, 151).map(function (x) {
+            return parseInt(x, 10)
+        });
+        window.lawLibrary = unpack(rows, '25').splice(4, 151).map(function (x) {
+            return parseInt(x, 10)
+        });
+        window.koreanStudies = unpack(rows, '26').splice(4, 151).map(function (x) {
+            return parseInt(x, 10)
+        });
+        window.recCenter = unpack(rows, '27').splice(4, 151).map(function (x) {
+            return parseInt(x, 10)
+        });
+        window.campusCenter = unpack(rows, '29').splice(4, 151).map(function (x) {
+            return parseInt(x, 10)
+        });
+        window.gateway = unpack(rows, '30').splice(4, 151).map(function (x) {
+            return parseInt(x, 10)
+        });
+        var DELAY = 1000; // delay in ms to add new data points
+
+        var strategy = document.getElementById('strategy');
+        console.log(building.value);
+
+        // create a graph2d with an (currently empty) dataset
+        var container = document.getElementById('visualization');
+        var dataset = new vis.DataSet();
+
+        var options = {
+            start: vis.moment().add(-30, 'seconds'), // changed so its faster
+            end: vis.moment(),
+            dataAxis: {
+                left: {
+                    range: {
+                        min: 0, max: 1500
+                    }
+                }
+            },
+            drawPoints: {
+                style: 'circle' // square, circle
+            },
+            shaded: {
+                orientation: 'bottom' // top, bottom
+            }
+        };
+        var graph2d = new vis.Graph2d(container, dataset, options);
+
+        // a function to generate data points
+        function y(x) {
+            switch(building.value){
+                case 'bachman':
+                    buildingStream = bachman;
+                    break;
+                case 'kuykn':
+                    buildingStream = kuykendallNorth;
+            }
+            console.log(buildingStream)
+            console.log(buildingStream[counter]);
+
+            counter++;
+
+            if(counter === 147)
+                counter = 0;
+            return Number(buildingStream[counter]);
+        }
+
+        function renderStep() {
+            // move the window (you can think of different strategies).
+            var now = vis.moment();
+            var range = graph2d.getWindow();
+            var interval = range.end - range.start;
+            switch (strategy.value) {
+                case 'continuous':
+                    // continuously move the window
+                    graph2d.setWindow(now - interval, now, {animation: false});
+                    requestAnimationFrame(renderStep);
+                    break;
+
+                case 'discrete':
+                    graph2d.setWindow(now - interval, now, {animation: false});
+                    setTimeout(renderStep, DELAY);
+                    break;
+
+                default: // 'static'
+                    // move the window 90% to the left when now is larger than the end of the window
+                    if (now > range.end) {
+                        graph2d.setWindow(now - 0.1 * interval, now + 0.9 * interval);
+                    }
+                    setTimeout(renderStep, DELAY);
+                    break;
+            }
+        }
+
+        renderStep();
+
+        /**
+         * Add a new datapoint to the graph
+         */
+        function addDataPoint() {
+            // add a new data point to the dataset
+            var now = vis.moment();
+            var yAxis = y(counter);
+            dataset.add({
+                x: now,
+                y: yAxis
+            });
+
+            // remove all data points which are no longer visible
+            var range = graph2d.getWindow();
+            var interval = range.end - range.start;
+            var oldIds = dataset.getIds({
+                filter: function (item) {
+                    return item.x < range.start - interval;
+                }
+            });
+            dataset.remove(oldIds);
+
+            setTimeout(addDataPoint, DELAY);
+        }
+
+
+        addDataPoint();
+    })
+</script>
+</body>
+</html>
