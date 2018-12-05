@@ -7,21 +7,24 @@
 
     <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.2.2/semantic.min.css">
+    <script src="https://www.amcharts.com/lib/3/ammap.js"></script>
+    <script src="https://www.amcharts.com/lib/3/maps/js/worldLow.js"></script>
+    <script src="https://www.amcharts.com/lib/3/themes/dark.js"></script>
+    <script src="https://www.amcharts.com/lib/3/plugins/dataloader/dataloader.min.js"></script>
+    <script src="https://www.amcharts.com/lib/4/core.js"></script>
+    <script src="https://www.amcharts.com/lib/4/charts.js"></script>
+    <script src="https://www.amcharts.com/lib/4/themes/animated.js"></script>
   </head>
 </head>
-<div class="ui topmenu menu" style="background-color: beige">
-  <img class="ui fitted left image item" src="https://raw.githubusercontent.com/mserai/mserai.github.io/master/images/uh.jpg" style="height: 30px">
-  <p>metric for total devices, data, number of devices up/down with arrow from previous day</p>
-</div>
 <body>
-<div class="ui grid" style="border: 0px">
+<div class="ui grid">
     <div class="twelve wide column">
       <div class="ui container">
         <div id="map"></div>
       </div>
     </div>
     <div class="four wide column">
-      <p>hi</p>
+      <div id="chartdiv"></div>
     </div>
   <div class="eight wide column" style="border-color: black">
     <div class="ui container">
@@ -38,6 +41,9 @@
         </div>
       </div>
     </div>
+    <div class="ui container">
+
+    </div>
   </div>
 </div>
 <script>
@@ -49,6 +55,7 @@
             return row[key];
           });
         }
+
         var accessPointy = [];
         var accessPointx = [];
         var accessPointName = [];
@@ -79,6 +86,17 @@
             opacity: 1,
             size: unpack(rows2, 'number'),
             sizeref: 500,
+            colorbar: {
+              //x: -0.15,
+              thickness: 15,
+              titleside: 'right',
+              outlinecolor: 'rgba(68,68,68,0)',
+              ticks: 'inside',
+              ticklen: 6,
+              showticksuffix: 'all',
+              ticksuffix: 'devices',
+              dtick: 5000
+            }
           },
         }];
         layout = {
@@ -186,9 +204,93 @@
 
         /*Go*/
         Plotly.plot('map', map, layout);
+
+        /**
+         * Load CSV data
+         */
+        AmCharts.loadFile("https://raw.githubusercontent.com/mserai/ICS484/master/UHFinal.csv", {}, function (response) {
+
+          /**
+           * Parse loaded CSV
+           */
+          var radialData = AmCharts.parseCSV(response, {
+            "separator": ",",
+            "useColumnNames": true,
+            //"useRowNames": true,
+            "numberFields": ["total"]
+          });
+          console.log(radialData)
+          // Themes begin
+          am4core.useTheme(am4themes_animated);
+          // Themes end
+
+          // Create chart instance
+          var chart = am4core.create("chartdiv", am4charts.RadarChart);
+          chart.scrollbarX = new am4core.Scrollbar();
+
+          var data = [];
+
+          for (var i = 0; i < radialData.length; i++) {
+            var dataItem = radialData[i];
+            var accessPoint = dataItem.name;
+            if (dataItem.name === "Webster Hall") {
+              data.push({ category: dataItem.date, value: dataItem.total});
+            }
+          }
+
+          chart.data = data;
+          chart.radius = am4core.percent(100);
+          chart.innerRadius = am4core.percent(50);
+
+          // Create axes
+          var categoryAxis = chart.xAxes.push(new am4charts.CategoryAxis());
+          categoryAxis.dataFields.category = "category";
+          categoryAxis.renderer.grid.template.location = 0;
+          categoryAxis.renderer.minGridDistance = 30;
+          categoryAxis.tooltip.disabled = false;
+          categoryAxis.renderer.minHeight = 110;
+          categoryAxis.renderer.grid.template.disabled = true;
+          categoryAxis.renderer.labels.template.disabled = true;
+          let labelTemplate = categoryAxis.renderer.labels.template;
+          labelTemplate.radius = am4core.percent(-60);
+          labelTemplate.location = 0.5;
+          labelTemplate.relativeRotation = 90;
+
+          var valueAxis = chart.yAxes.push(new am4charts.ValueAxis());
+          valueAxis.renderer.grid.template.disabled = true;
+          valueAxis.renderer.labels.template.disabled = true;
+          valueAxis.tooltip.disabled = true;
+
+          // Create series
+          var series = chart.series.push(new am4charts.RadarColumnSeries());
+          series.sequencedInterpolation = true;
+          series.dataFields.valueY = "value";
+          series.dataFields.categoryX = "category";
+          series.columns.template.strokeWidth = 0;
+          series.tooltipText = "{valueY}";
+          series.columns.template.radarColumn.cornerRadius = 10;
+          series.columns.template.radarColumn.innerCornerRadius = 0;
+
+          series.tooltip.pointerOrientation = "vertical";
+
+          // on hover, make corner radiuses bigger
+          let hoverState = series.columns.template.radarColumn.states.create("hover");
+          hoverState.properties.cornerRadius = 0;
+          hoverState.properties.fillOpacity = 1;
+
+          series.columns.template.adapter.add("fill", (fill, target) => {
+            return chart.colors.getIndex(target.dataItem.index);
+          })
+
+          // Cursor
+          chart.cursor = new am4charts.RadarCursor();
+          chart.cursor.innerRadius = am4core.percent(50);
+          chart.cursor.lineY.disabled = true;
         })
-    })
-  });
+        })
+      })
+    });
+
 </script>
 </body>
 </html>
