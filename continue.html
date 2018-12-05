@@ -483,12 +483,18 @@
         function addDataPoint() {
             // add a new data point to the dataset
             var now = vis.moment();
-            var yAxis = y(counter);
+            var y1 = y(counter);
+            var y2 = z(counter);
             dataset.add({
                 content: 'no',
                 x: dates[counter],
-                y: yAxis,
+                y: y1,
                 group: 0
+            });
+            dataset.add({
+                x: dates[counter],
+                y: y2,
+                group: 1
             });
             console.log(counter);
             if (counter % 10 === 0 || counter === 0)
@@ -509,34 +515,7 @@
             setTimeout(addDataPoint, DELAY);
         }
 
-        function addDataPoint2() {
-            // add a new data point to the dataset
-            var now = vis.moment();
-            var yAxis = z(counter);
-            dataset.add({
-                x: dates[counter],
-                y: yAxis,
-                group: 1
-            });
-
-            // remove all data points which are no longer visible
-            var range = graph2d.getWindow();
-            var interval = range.end - range.start;
-            var oldIds = dataset.getIds({
-                filter: function (item) {
-                    return item.x < range.start - interval;
-                }
-            });
-            dataset.remove(oldIds);
-            DELAY = delayCheck();
-            if (counter)
-                setTimeout(addDataPoint2, DELAY);
-        }
-
-
-
         addDataPoint();
-        addDataPoint2();
     })
 
 
