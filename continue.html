@@ -111,12 +111,12 @@
     var reset = 0;
 
     function resetter(){
-        console.log('yoafasdf');
         reset = 1;
         return 0;
     }
 
     var options = {
+        legend: true,
         start: '2018-8-16',//vis.moment().add(-30, 'seconds'), // changed so its faster
         end: '2018-8-22',
         dataAxis: {
@@ -133,10 +133,25 @@
             orientation: 'bottom' // top, bottom
         }
     };
+    var names = ['Administrative Services', 'Art Building', 'Bachman', 'Campus Center', 'Crawford', 'East West Parking Kiosk', 'Gateway House',
+        'Geophysics', 'Hamilton Library', 'Hawai\'i Hale', 'Keller Hall', 'Kennedy Theatre', 'Korean Studies', 'Kuykendall North',
+        'Kuykendall West', ' Law Library', 'Law School', 'Oceanography', 'Physical Science', 'Queen Lili\'oukalani Center', 'Sinclair',
+        'Sinclair Parking Kiosk', 'Warrior Rec Center', 'Watanabe Hall', 'Webster Hall'];
+
 
     var dataset = new vis.DataSet();
+    var groups = new vis.DataSet();
     var container = document.getElementById('visualization');
-    var graph2d = new vis.Graph2d(container, dataset, options);
+
+    for(var i = 0; i < names.length; i++){
+        groups.add({
+            id: i,
+            content: names[i]
+        });
+    }
+    var graph2d = new vis.Graph2d(container, dataset, groups, options);
+
+
 
     Plotly.d3.csv("https://raw.githubusercontent.com/ManoaDataVisualizationProject/JAE/master/UHWeekXL.csv", function (err, rows) {
         function unpack(rows, key) {
@@ -266,13 +281,95 @@
             return ret;
         }
 
+        function groupCheck(build){
+            var ret;
+            switch (build) {
+                case 'admin':
+                    ret = 0;
+                    break;
+                case 'art':
+                    ret = 1;
+                    break;
+                case 'bachman':
+                    ret = 2;
+                    break;
+                case 'campusCenter':
+                    ret = 3;
+                    break;
+                case 'crawford':
+                    ret = 4;
+                    break;
+                case 'eastWest':
+                    ret = 5;
+                    break;
+                case 'gateway':
+                    ret = 6;
+                    break;
+                case 'geophysics':
+                    ret = 7;
+                    break;
+                case 'hamilton':
+                    ret = 8;
+                    break;
+                case 'hawaii':
+                    ret = 9;
+                    break;
+                case 'keller':
+                    ret = 10;
+                    break;
+                case 'kennedy':
+                    ret = 11;
+                    break;
+                case 'koreanStudies':
+                    ret = 12;
+                    break;
+                case 'kuykendallNorth':
+                    ret = 13;
+                    break;
+                case 'kuykendallWest':
+                    ret = 14;
+                    break;
+                case 'lawlibrary':
+                    ret = 15;
+                    break;
+                case 'lawSchool':
+                    ret = 16;
+                    break;
+                case 'oceanography':
+                    ret = 17;
+                    break;
+                case 'physical':
+                    ret = 18;
+                    break;
+                case 'qlcc':
+                    ret = 19;
+                    break;
+                case 'sinclair':
+                    ret = 20;
+                    break;
+                case 'parking':
+                    ret = 21;
+                    break;
+                case 'recCenter':
+                    ret = 22;
+                    break;
+                case 'watanabe':
+                    ret = 23;
+                    break;
+                case 'webster':
+                    ret = 24;
+                    break;
+            }
+            return ret;
+        }
+
         function resetCheck(){
             if(reset === 1){
                 graph2d.destroy();
                 reset = 0;
                 dataset = new vis.DataSet();
                 container = document.getElementById('visualization');
-                graph2d = new vis.Graph2d(container, dataset, options);
+                graph2d = new vis.Graph2d(container, dataset, groups, options);
                 counter = 0;
                 graph2d.setWindow(dates[counter - 12], dates[counter + 12]);
             }
@@ -489,12 +586,12 @@
                 content: 'no',
                 x: dates[counter],
                 y: y1,
-                group: 0
+                group: groupCheck(building.value)
             });
             dataset.add({
                 x: dates[counter],
                 y: y2,
-                group: 1
+                group: groupCheck(building2.value)
             });
             console.log(counter);
             if (counter % 10 === 0 || counter === 0)
