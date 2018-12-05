@@ -46,15 +46,15 @@
   }, {
     "weekday": "Monday",
     "cars": 2106,
-    "motorcycles": 1701
+    "motorcycles": 1801
   }, {
     "weekday": "Tuesday",
-    "cars": 2277,
+    "cars": 2577,
     "motorcycles": 1434
   }, {
     "weekday": "Wednesday",
     "cars": 2243,
-    "motorcycles": 1865
+    "motorcycles": 1925
   }];
 
   var dateAxis = chart.xAxes.push(new am4charts.CategoryAxis());
@@ -79,7 +79,7 @@
   series.stacked = true;
 
   var series2 = chart.series.push(new am4charts.LineSeries());
-  series2.name = "East West Kiosk";
+  series2.name = "Holmes Hall";
   series2.dataFields.categoryX = "weekday";
   series2.dataFields.valueY = "motorcycles";
   series2.tooltipHTML = "<span style='font-size:14px; color:#000000;'><b>{valueY.value} users</b></span>";
