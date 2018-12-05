@@ -70,9 +70,32 @@
     </select>
     <label for="building2">Compare to: </label>
     <select id="building2">
+        <option value ="admin">Administrative Services</option>
         <option value ="art">Art Building</option>
         <option value="bachman">Bachman</option>
-    </select>>
+        <option value ="campusCenter">Campus Center</option>
+        <option value ="crawford">Crawford Hall</option>
+        <option value ="eastWest">East-West Parking Kiosk</option>
+        <option value ="gateway">Gateway House</option>
+        <option value ="geophysics">Geophysics</option>
+        <option value ="hamilton">Hamilton Library</option>
+        <option value ="hawaii">Hawai'i Hale</option>
+        <option value ="keller">Keller Hall</option>
+        <option value ="kennedy">Kennedy Theatre</option>
+        <option value ="koreanStudies">Korean Studies</option>
+        <option value="kuykendallNorth">Kuykendall North</option>
+        <option value="kuykendallWest">Kuykendall West</option>
+        <option value ="lawLibrary">Law Library</option>
+        <option value ="lawSchool">Law School</option>
+        <option value ="oceanography">Oceanography</option>
+        <option value ="physical">Physical Science</option>
+        <option value ="qlcc">Queen Lili'oukalani Center</option>
+        <option value ="sinclair">Sinclair Library</option>
+        <option value ="parking">Sinclair Parking Kiosk</option>
+        <option value ="recCenter">Warrior Rec Center</option>
+        <option value ="watanabe">Watanabe Hall</option>
+        <option value ="webster">Webster Hall</option>
+    </select>
 
 </p>
 
@@ -83,6 +106,7 @@
     //I'm using globals. Forgive me for I have sinned
     var counter = 0;
     var building = document.getElementById('building');
+    var building2 = document.getElementById('building2');
 
     Plotly.d3.csv("https://raw.githubusercontent.com/ManoaDataVisualizationProject/JAE/master/UHWeekXL.csv", function(err, rows) {
         function unpack(rows, key) {
@@ -92,6 +116,7 @@
         }
 
         var buildingStream = [];
+        var buildingStream2 = [];
 
         window.dates = unpack(rows, 'Access Point ID').splice(4, 151);
         window.bachman = unpack(rows, '1').splice(4, 151).map(function (x) {
@@ -172,7 +197,7 @@
         var DELAY = 1000; // delay in ms to add new data points
 
         var strategy = document.getElementById('strategy');
-        console.log(building.value);
+        //console.log(building.value);
 
         // create a graph2d with an (currently empty) dataset
         var container = document.getElementById('visualization');
@@ -280,9 +305,95 @@
                     break;
 
             }
-            console.log(buildingStream);
-            console.log(buildingStream[counter]);
+            counter++;
 
+            if(counter === 147)
+                counter = 0;
+            return Number(buildingStream[counter]);
+        }
+
+        function z(x) {
+            switch(building.value){
+                case 'admin':
+                    buildingStream = admin;
+                    break;
+                case 'art':
+                    buildingStream = art;
+                    break;
+                case 'bachman':
+                    buildingStream = bachman;
+                    break;
+                case 'campusCenter':
+                    buildingStream = campusCenter;
+                    break;
+                case 'crawford':
+                    buildingStream = campusCenter;
+                    break;
+                case 'eastWest':
+                    buildingStream = eastWest;
+                    break;
+                case 'gateway':
+                    buildingStream = gateway;
+                    break;
+                case 'geophysics':
+                    buildingStream = geophysics;
+                    break;
+                case 'hamilton':
+                    buildingStream = hamilton;
+                    break;
+                case 'hawaii':
+                    buildingStream = hawaii;
+                    break;
+                case 'keller':
+                    buildingStream = keller;
+                    break;
+                case 'kennedy':
+                    buildingStream = kennedy;
+                    break;
+                case 'koreanStudies':
+                    buildingStream = koreanStudies;
+                    break;
+                case 'kuykendallNorth':
+                    buildingStream = kuykendallNorth;
+                    break;
+                case 'kuykendallWest':
+                    buildingStream = kuykendallWest;
+                    break;
+                case 'lawlibrary':
+                    buildingStream = lawLibrary;
+                    break;
+                case 'lawSchool':
+                    buildingStream = lawSchool;
+                    break;
+                case 'oceanography':
+                    buildingStream = oceanography;
+                    break;
+                case 'physical':
+                    buildingStream = physical;
+                    break;
+                case 'qlcc':
+                    buildingStream = qlcc;
+                    break;
+                case 'sinclair':
+                    buildingStream = sinclair;
+                    break;
+                case 'parking':
+                    buildingStream = parking;
+                    break;
+                case 'recCenter':
+                    buildingStream = recCenter;
+                    break;
+                case 'watanabe':
+                    buildingStream = watanabe;
+                    break;
+                case 'webster':
+                    buidlingStream = webster;
+                    break;
+                default:
+                    buildingStream = admin;
+                    break;
+
+            }
             counter++;
 
             if(counter === 147)
@@ -322,7 +433,8 @@
             var yAxis = y(counter);
             dataset.add({
                 x: now,
-                y: yAxis
+                y: yAxis,
+                group: 0
             });
 
             // remove all data points which are no longer visible
@@ -341,10 +453,11 @@
         function addDataPoint2() {
             // add a new data point to the dataset
             var now = vis.moment();
-            var yAxis2 = y(counter);
+            var yAxis = z(counter);
             dataset.add({
                 x: now,
-                y: yAxis2
+                y: yAxis,
+                group: 1
             });
 
             // remove all data points which are no longer visible
@@ -357,12 +470,12 @@
             });
             dataset.remove(oldIds);
 
-            setTimeout(addDataPoint, DELAY);
+            setTimeout(addDataPoint2, DELAY);
         }
 
 
         addDataPoint();
-        addDataPoint2()
+        addDataPoint2();
     })
 </script>
 </body>
