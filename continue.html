@@ -31,29 +31,32 @@
         <option value="static">Static</option>
     </select>
     <select id="building">
+
+        <option value ="admin">Administrative Services</option>
+        <option value ="art">Art Building</option>
         <option value="bachman">Bachman</option>
-        <option value="kuykn">Kuykendall North</option>
-        <option value ="geophys">Geophysics</option>
-        <option value ="kuykw">Kuykendall West</option>
-        <option value ="kuykw">Kuykendall West</option>
-        <option value ="kuykw">Kuykendall West</option>
-        <option value ="kuykw">Kuykendall West</option>
-        <option value ="kuykw">Kuykendall West</option>
-        <option value ="kuykw">Kuykendall West</option>
-        <option value ="kuykw">Kuykendall West</option>
-        <option value ="kuykw">Kuykendall West</option>
-        <option value ="kuykw">Kuykendall West</option>
-        <option value ="kuykw">Kuykendall West</option>
-        <option value ="kuykw">Kuykendall West</option>
-        <option value ="kuykw">Kuykendall West</option>
-        <option value ="kuykw">Kuykendall West</option>
-        <option value ="kuykw">Kuykendall West</option>
-        <option value ="kuykw">Kuykendall West</option>
-        <option value ="kuykw">Kuykendall West</option>
-        <option value ="kuykw">Kuykendall West</option>
-        <option value ="kuykw">Kuykendall West</option>
-        <option value ="kuykw">Kuykendall West</option>
-        <option value ="kuykw">Kuykendall West</option>
+        <option value ="campusCenter">Campus Center</option>
+        <option value ="crawford">Crawford Hall</option>
+        <option value ="eastWest">East-West Parking Kiosk</option>
+        <option value ="gateway">Gateway House</option>
+        <option value ="geophysics">Geophysics</option>
+        <option value ="hamilton">Hamilton Library</option>
+        <option value ="hawaii">Hawai'i Hale</option>
+        <option value ="keller">Keller Hall</option>
+        <option value ="kennedy">Kennedy Theatre</option>
+        <option value ="koreanStudies">Korean Studies</option>
+        <option value="kuykendallNorth">Kuykendall North</option>
+        <option value="kuykendallWest">Kuykendall West</option>
+        <option value ="lawLibrary">Law Library</option>
+        <option value ="lawSchool">Law School</option>
+        <option value ="oceanography">Oceanography</option>
+        <option value ="physical">Physical Science</option>
+        <option value ="qlcc">Queen Lili'oukalani Center</option>
+        <option value ="sinclair">Sinclair Library</option>
+        <option value ="parking">Sinclair Parking Kiosk</option>
+        <option value ="recCenter">Warrior Rec Center</option>
+        <option value ="watanabe">Watanabe Hall</option>
+        <option value ="webster">Webster Hall</option>
     </select>
 </p>
 
@@ -181,11 +184,112 @@
         // a function to generate data points
         function y(x) {
             switch(building.value){
+                case 'admin':
+                    buildingStream = admin;
+                    break;
+                case 'art':
+                    buildingStream = art;
+                    break;
                 case 'bachman':
                     buildingStream = bachman;
                     break;
-                case 'kuykn':
+                case 'campusCenter':
+                    buildingStream = campusCenter;
+                    break;
+                case 'crawford':
+                    buildingStream = campusCenter;
+                    break;
+                case 'eastWest':
+                    buildingStream = eastWest;
+                    break;
+                case 'gateway':
+                    buildingStream = gateway;
+                    break;
+                case 'geophysics':
+                    buildingStream = geophysics;
+                    break;
+                case 'hamilton':
+                    buildingStream = hamilton;
+                    break;
+                case 'hawaii':
+                    buildingStream = hawaii;
+                    break;
+                case 'keller':
+                    buildingStream = keller;
+                    break;
+                case 'kennedy':
+                    buildingStream = kennedy;
+                    break;
+                case 'koreanStudies':
+                    buildingStream = koreanStudies;
+                    break;
+                case 'kuykendallNorth':
                     buildingStream = kuykendallNorth;
+                    break;
+                case 'kuykendallWest':
+                    buildingStream = kuykendallWest;
+                    break;
+                case 'lawlibrary':
+                    buildingStream = lawLibrary;
+                    break;
+                case 'lawSchool':
+                    buildingStream = lawSchool;
+                    break;
+                case 'oceanography':
+                    buildingStream = oceanography;
+                    break;
+                case 'physical':
+                    buildingStream = physical;
+                    break;
+                case 'qlcc':
+                    buildingStream = qlcc;
+                    break;
+                case 'sinclair':
+                    buildingStream = sinclair;
+                    break;
+                case 'parking':
+                    buildingStream = parking;
+                    break;
+                case 'recCenter':
+                    buildingStream = recCenter;
+                    break;
+                case 'watanabe':
+                    buildingStream = watanabe;
+                    break;
+                case 'webster':
+                    buidlingStream = webster;
+                    break;
+                default:
+                    buildingStream = admin;
+                    break;
+
+                    /*
+                <option value ="admin">Administrative Services</option>
+                <option value ="art">Art Building</option>
+                <option value="bachman">Bachman</option>
+                    <option value ="campusCenter">Campus Center</option>
+                <option value ="crawford">Crawford Hall</option>
+                <option value ="eastWest">East-West Parking Kiosk</option>
+                <option value ="gateway">Gateway House</option>
+                <option value ="geophysics">Geophysics</option>
+                    <option value ="hamilton">Hamilton Library</option>
+                <option value ="hawaii">Hawai'i Hale</option>
+                <option value ="keller">Keller Hall</option>
+                <option value ="kennedy">Kennedy Theatre</option>
+                <option value ="koreanStudies">Korean Studies</option>
+                <option value="kuykendallNorth">Kuykendall North</option>
+                <option value="kuykendallWest">Kuykendall West</option>
+                <option value ="lawLibrary">Law Library</option>
+                <option value ="lawSchool">Law School</option>
+                <option value ="oceanography">Oceanography</option>
+                    <option value ="physical">Physical Science</option>
+                <option value ="qlcc">Queen Lili'oukalani Center</option>
+                <option value ="sinclair">Sinclair Library</option>
+                <option value ="parking">Sinclair Parking Kiosk</option>
+                <option value ="recCenter">Warrior Rec Center</option>
+                <option value ="watanabe">Watanabe Hall</option>
+                <option value ="webster">Webster Hall</option>
+*/
             }
             console.log(buildingStream)
             console.log(buildingStream[counter]);
