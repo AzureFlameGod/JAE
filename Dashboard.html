@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>UH Dashboard</title>
+  <head>
+
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.2.2/semantic.min.css">
+  </head>
+</head>
+<div class="ui topmenu menu" style="background-color: beige">
+  <img class="ui fitted left image item" src="https://raw.githubusercontent.com/mserai/mserai.github.io/master/images/uh.jpg" style="height: 30px">
+  <p>metric for total devices, data, number of devices up/down with arrow from previous day</p>
+</div>
+<body>
+<div class="ui grid" style="border: 0px">
+    <div class="twelve wide column">
+      <div class="ui container">
+        <div id="map"></div>
+      </div>
+    </div>
+    <div class="four wide column">
+      <p>hi</p>
+    </div>
+  <div class="eight wide column" style="border-color: black">
+    <div class="ui container">
+      <div class="showcase__section" id="bubble">
+        <div class="spacer --small"></div>
+        <div id="bubbleplots">
+          <div class="bubbleplot" data-num="0">
+            <div class="control-row">
+              Access Point: <select class="accessPointData">
+            </select>
+            </div>
+            <div class="plot" id="plots1"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+  Plotly.d3.csv('https://raw.githubusercontent.com/mserai/ICS484/master/UHFinal.csv', function(err, rows){
+    Plotly.d3.csv('https://raw.githubusercontent.com/mserai/ICS484/master/UHAccessPoints.csv', function(err1, rows1) {
+      Plotly.d3.csv('https://raw.githubusercontent.com/mserai/ICS484/master/UHTotals.csv', function (err2, rows2) {
+        function unpack(rows, key) {
+          return rows.map(function (row) {
+            return row[key];
+          });
+        }
+        var accessPointy = [];
+        var accessPointx = [];
+        var accessPointName = [];
+        /*Grab*/
+        accessPointy.push(Object.keys(rows1[0])[0]);
+        accessPointx.push(Object.keys(rows1[0])[1]);
+        accessPointName.push(Object.keys(rows1[0])[2]);
+        for (var i = 0; i < rows1.length; i++) {
+          accessPointx.push(rows1[i]["lat"]);
+          accessPointy.push(rows1[i]["long"]);
+          accessPointName.push(rows1[i]["name"]);
+        }
+        var colors = [[0, '#d0d1e6'], [0.25, '#a6bddb'], [0.5, '#67a9cf'], [0.75, '#3690c0'], [1, '#02818a']];
+
+        var map = [{
+          type: 'scattermapbox',
+          mode: 'markers+text',
+          text: unpack(rows1, 'name'),
+          lon: unpack(rows2, 'long'),
+          lat: unpack(rows2, 'lat'),
+          hovertext: unpack(rows2, 'number'),
+          marker: {
+            color: unpack(rows2, 'number'),
+            colorscale: colors,
+            cmin: 0,
+            cmax: 45000,
+            reversescale: false,
+            opacity: 1,
+            size: unpack(rows2, 'number'),
+            sizeref: 500,
+          },
+        }];
+        layout = {
+          height: 370,
+          width: 1400,
+          dragmode: 'zoom',
+          title: 'UH Access Point Data',
+          mapbox: {
+            pitch: 60,
+            bearing: 10,
+            center: {
+              lat: 21.2980,
+              lon: -157.817835
+            },
+            domain: {
+              x: [0, 1],
+              y: [0, 1]
+            },
+            style: 'light',
+            zoom: 15.8
+          },
+          margin: {
+            r: 590,
+            t: 0,
+            b: 0,
+            l: 0,
+            pad: 0
+          },
+
+          showlegend: false
+        };
+        Plotly.setPlotConfig({
+          mapboxAccessToken: 'pk.eyJ1IjoibXNlcmFpIiwiYSI6ImNqbTl1NWJ5ajAwMW8zcG1yNjY5emc5NnMifQ.Ig1yRjY3fv_Babaz0TbVOw'
+        });
+
+        var allAccessPoints = unpack(rows, 'name'),
+            allDate = unpack(rows, 'date'),
+            allTotal = unpack(rows, 'total'),
+            listOfAccessPoints = [],
+            currentAccessPoint,
+            currentTotal = [],
+            currentDate = [];
+
+        for (var i = 0; i < allAccessPoints.length; i++) {
+          if (listOfAccessPoints.indexOf(allAccessPoints[i]) === -1) {
+            listOfAccessPoints.push(allAccessPoints[i]);
+          }
+        }
+
+        function getAccessPointData(chosenAccessPoint) {
+          currentDate = [];
+          currentTotal = [];
+          for (var i = 0; i < allAccessPoints.length; i++) {
+            if (allAccessPoints[i] === chosenAccessPoint) {
+              currentTotal.push(allTotal[i]);
+              currentDate.push(allDate[i]);
+            }
+          }
+        }
+
+        setBubblePlot('Webster Hall');
+
+        function setBubblePlot(chosenAccessPoint) {
+          getAccessPointData(chosenAccessPoint);
+
+          var trace1 = {
+            x: currentDate,
+            y: currentTotal,
+            mode: 'lines+marker',
+            marker: {
+              size: 50,
+              opacity: 1
+            }
+          };
+
+          var data = [trace1];
+
+          var layout = {
+            height: 400,
+            width: 900,
+          };
+
+          Plotly.newPlot(plots1, data, layout);
+        }
+
+        var innerContainer = document.querySelector('[data-num="0"'),
+            plotEl = innerContainer.querySelector('.plot'),
+            accessPointSelector = innerContainer.querySelector('.accessPointData');
+
+        function assignOptions(textArray, selector) {
+          for (var i = 0; i < textArray.length; i++) {
+            var currentOption = document.createElement('option');
+            currentOption.text = textArray[i];
+            selector.appendChild(currentOption);
+          }
+        }
+
+        assignOptions(listOfAccessPoints, accessPointSelector);
+
+        function updateAccessPoint() {
+          setBubblePlot(accessPointSelector.value);
+        }
+
+        accessPointSelector.addEventListener('change', updateAccessPoint, false);
+
+        /*Go*/
+        Plotly.plot('map', map, layout);
+        })
+    })
+  });
+</script>
+</body>
+</html>
