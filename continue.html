@@ -7,7 +7,7 @@
     <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
     <script src ="https://cdnjs.cloudflare.com/ajax/libs/vis/4.21.0/vis.min.js"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/vis/4.21.0/vis.min.css" rel="stylesheet" type="text/css"/>
-    <title>Graph2d | Streaming data</title>
+    <title>Campus Devices by Location | Streaming data</title>
 
     <style type="text/css">
         body, html, select {
@@ -26,12 +26,22 @@
 <p>
     <label for="strategy">Strategy:</label>
     <select id="strategy">
-        <option value="continuous" selected>Continuous (CPU intensive)</option>
-        <option value="discrete">Discrete</option>
         <option value="static">Static</option>
+        <option value="discrete">Discrete</option>
     </select>
-    <select id="building">
+    <label for="refresh">Refresh Every <select id="refresh">
+        <option value="tenth">1/10</option>
+        <option selected = "selected" value="one">1</option>
+        <option value="two">2</option>
+        <option value="three">3</option>
+        <option value="five">5</option>
+        <option value="ten">10</option>
+    </select> second(s)</label>
 
+</p>
+<p>
+    <label for="building">Building:</label>
+    <select id="building">
         <option value ="admin">Administrative Services</option>
         <option value ="art">Art Building</option>
         <option value="bachman">Bachman</option>
@@ -58,6 +68,12 @@
         <option value ="watanabe">Watanabe Hall</option>
         <option value ="webster">Webster Hall</option>
     </select>
+    <label for="building2">Compare to: </label>
+    <select id="building2">
+        <option value ="art">Art Building</option>
+        <option value="bachman">Bachman</option>
+    </select>>
+
 </p>
 
 <div id="visualization"></div>
@@ -75,7 +91,7 @@
             });
         }
 
-        var buildingStream;
+        var buildingStream = [];
 
         window.dates = unpack(rows, 'Access Point ID').splice(4, 151);
         window.bachman = unpack(rows, '1').splice(4, 151).map(function (x) {
@@ -263,35 +279,8 @@
                     buildingStream = admin;
                     break;
 
-                    /*
-                <option value ="admin">Administrative Services</option>
-                <option value ="art">Art Building</option>
-                <option value="bachman">Bachman</option>
-                    <option value ="campusCenter">Campus Center</option>
-                <option value ="crawford">Crawford Hall</option>
-                <option value ="eastWest">East-West Parking Kiosk</option>
-                <option value ="gateway">Gateway House</option>
-                <option value ="geophysics">Geophysics</option>
-                    <option value ="hamilton">Hamilton Library</option>
-                <option value ="hawaii">Hawai'i Hale</option>
-                <option value ="keller">Keller Hall</option>
-                <option value ="kennedy">Kennedy Theatre</option>
-                <option value ="koreanStudies">Korean Studies</option>
-                <option value="kuykendallNorth">Kuykendall North</option>
-                <option value="kuykendallWest">Kuykendall West</option>
-                <option value ="lawLibrary">Law Library</option>
-                <option value ="lawSchool">Law School</option>
-                <option value ="oceanography">Oceanography</option>
-                    <option value ="physical">Physical Science</option>
-                <option value ="qlcc">Queen Lili'oukalani Center</option>
-                <option value ="sinclair">Sinclair Library</option>
-                <option value ="parking">Sinclair Parking Kiosk</option>
-                <option value ="recCenter">Warrior Rec Center</option>
-                <option value ="watanabe">Watanabe Hall</option>
-                <option value ="webster">Webster Hall</option>
-*/
             }
-            console.log(buildingStream)
+            console.log(buildingStream);
             console.log(buildingStream[counter]);
 
             counter++;
@@ -307,12 +296,6 @@
             var range = graph2d.getWindow();
             var interval = range.end - range.start;
             switch (strategy.value) {
-                case 'continuous':
-                    // continuously move the window
-                    graph2d.setWindow(now - interval, now, {animation: false});
-                    requestAnimationFrame(renderStep);
-                    break;
-
                 case 'discrete':
                     graph2d.setWindow(now - interval, now, {animation: false});
                     setTimeout(renderStep, DELAY);
@@ -355,8 +338,31 @@
             setTimeout(addDataPoint, DELAY);
         }
 
+        function addDataPoint2() {
+            // add a new data point to the dataset
+            var now = vis.moment();
+            var yAxis2 = y(counter);
+            dataset.add({
+                x: now,
+                y: yAxis2
+            });
+
+            // remove all data points which are no longer visible
+            var range = graph2d.getWindow();
+            var interval = range.end - range.start;
+            var oldIds = dataset.getIds({
+                filter: function (item) {
+                    return item.x < range.start - interval;
+                }
+            });
+            dataset.remove(oldIds);
+
+            setTimeout(addDataPoint, DELAY);
+        }
+
 
         addDataPoint();
+        addDataPoint2()
     })
 </script>
 </body>
