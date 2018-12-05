@@ -96,6 +96,7 @@
 
 </p>
 <button class="button" style="margin-left:10px" onclick="resetter()">Reset</button>
+<input type="button" id="mixBut" value="Start" />
 <br/>
 <br/>
 <div id="visualization"></div>
@@ -108,10 +109,31 @@
     var building2 = document.getElementById('building2');
     var speed = document.getElementById('refresh');
     var reset = 0;
+    var go = 0;
 
     function resetter(){
         reset = 1;
         return 0;
+    }
+
+    var mixBut = document.getElementById("mixBut");
+
+    mixBut.addEventListener("click", Start);
+
+    function Start(){
+        console.log("Started");
+        mixBut.removeEventListener("click", Start);
+        mixBut.addEventListener("click", Stop);
+        mixBut.value = "Stop";
+        go = 1;
+    }
+
+    function Stop(){
+        console.log("Stopped");
+        mixBut.removeEventListener("click", Stop);
+        mixBut.addEventListener("click", Start);
+        mixBut.value = "Start";
+        go = 0;
     }
 
     var options = {
@@ -374,6 +396,7 @@
             }
         }
 
+
         // a function to generate data points
         function y(x) {
             switch (building.value) {
@@ -563,9 +586,6 @@
             if (now > range.end) {
                 graph2d.setWindow(graph2d.fit(), dates[counter + 40], {animation: false});
             }
-            //console.log('now' + dates[counter]);
-            console.log(new Date(dates[counter]));
-            console.log('end' + range.end);
             setTimeout(renderStep, DELAY);
 
 
@@ -577,38 +597,40 @@
          * Add a new datapoint to the graph
          */
         function addDataPoint() {
-            // add a new data point to the dataset
-            var now = vis.moment();
-            var y1 = y(counter);
-            var y2 = z(counter);
-            dataset.add({
-                content: 'no',
-                x: dates[counter],
-                y: y1,
-                group: groupCheck(building.value)
-            });
-            dataset.add({
-                x: dates[counter],
-                y: y2,
-                group: groupCheck(building2.value)
-            });
-            console.log(counter);
-            if (counter % 10 === 0 || counter === 0)
-                graph2d.fit();
+            if (go === 0 || counter === 147) {
+                console.log(counter);
+            }
+            else {
+                var y1 = y(counter);
+                var y2 = z(counter);
+                dataset.add({
+                    content: 'no',
+                    x: dates[counter],
+                    y: y1,
+                    group: groupCheck(building.value)
+                });
+                dataset.add({
+                    x: dates[counter],
+                    y: y2,
+                    group: groupCheck(building2.value)
+                });
+                if (counter % 10 === 0 || counter === 0)
+                    graph2d.fit();
 
-            // remove all data points which are no longer visible
-            var range = graph2d.getWindow();
-            var interval = range.end - range.start;
-            var oldIds = dataset.getIds({
-                filter: function (item) {
-                    return item.x < range.start - interval;
-                }
-            });
+                // remove all data points which are no longer visible
+                var range = graph2d.getWindow();
+                var interval = range.end - range.start;
+                var oldIds = dataset.getIds({
+                    filter: function (item) {
+                        return item.x < range.start - interval;
+                    }
+                });
+            }
 
-            resetCheck();
             dataset.remove(oldIds);
             DELAY = delayCheck();
             setTimeout(addDataPoint, DELAY);
+            resetCheck();
         }
 
         addDataPoint();
