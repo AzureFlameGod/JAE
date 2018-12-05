@@ -7,6 +7,7 @@
     <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/vis/4.21.0/vis.min.js"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/vis/4.21.0/vis.min.css" rel="stylesheet" type="text/css"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.2.2/semantic.min.css">
     <title>Campus Devices by Location | Streaming data</title>
 
     <style type="text/css">
@@ -18,11 +19,9 @@
 
 </head>
 <body>
-<h2>Graph2d | Streaming data</h2>
+<h2>UH Campus Data | Streaming Comparison</h2>
 <p style="max-width: 700px;">
-    This example demonstrates how to apply streaming data input to the Graph2d. The example shows two different ways to
-    let the window move along with the new data, and there are more strategies for that. Note also that it is possible
-    to disable moving and/or zooming the graph by setting options <code>moveable</code> and <code>zoomable</code> false.
+   This visualization takes in a constant stream of data and relates into another data stream. Built using vis.js.
 </p>
 
 <p>
@@ -38,7 +37,7 @@
 
 </p>
 <p>
-    <label for="building">Building:</label>
+    <label for="building"></div>Building:</label>
     <select id="building">
         <option value="admin">Administrative Services</option>
         <option value="art">Art Building</option>
@@ -96,8 +95,10 @@
     </select>
 
 </p>
+<button class="button" style="margin-left:10px" onclick="resetter()">Reset</button>
+<input type="button" id="mixBut" value="Start" />
 <br/>
-<div id="Legend" class="external-legend"></div>
+<br/>
 <div id="visualization"></div>
 
 <script type="text/javascript">
@@ -107,6 +108,71 @@
     var building = document.getElementById('building');
     var building2 = document.getElementById('building2');
     var speed = document.getElementById('refresh');
+    var reset = 0;
+    var go = 0;
+
+    function resetter(){
+        reset = 1;
+        return 0;
+    }
+
+    var mixBut = document.getElementById("mixBut");
+
+    mixBut.addEventListener("click", Start);
+
+    function Start(){
+        console.log("Started");
+        mixBut.removeEventListener("click", Start);
+        mixBut.addEventListener("click", Stop);
+        mixBut.value = "Stop";
+        go = 1;
+    }
+
+    function Stop(){
+        console.log("Stopped");
+        mixBut.removeEventListener("click", Stop);
+        mixBut.addEventListener("click", Start);
+        mixBut.value = "Start";
+        go = 0;
+    }
+
+    var options = {
+        legend: true,
+        start: '2018-8-16',//vis.moment().add(-30, 'seconds'), // changed so its faster
+        end: '2018-8-22',
+        dataAxis: {
+            left: {
+                range: {
+                    min: 0, max: 1500
+                }
+            }
+        },
+        drawPoints: {
+            style: 'circle' // square, circle
+        },
+        shaded: {
+            orientation: 'bottom' // top, bottom
+        }
+    };
+    var names = ['Administrative Services', 'Art Building', 'Bachman', 'Campus Center', 'Crawford', 'East West Parking Kiosk', 'Gateway House',
+        'Geophysics', 'Hamilton Library', 'Hawai\'i Hale', 'Keller Hall', 'Kennedy Theatre', 'Korean Studies', 'Kuykendall North',
+        'Kuykendall West', ' Law Library', 'Law School', 'Oceanography', 'Physical Science', 'Queen Lili\'oukalani Center', 'Sinclair',
+        'Sinclair Parking Kiosk', 'Warrior Rec Center', 'Watanabe Hall', 'Webster Hall'];
+
+
+    var dataset = new vis.DataSet();
+    var groups = new vis.DataSet();
+    var container = document.getElementById('visualization');
+
+    for(var i = 0; i < names.length; i++){
+        groups.add({
+            id: i,
+            content: names[i]
+        });
+    }
+    var graph2d = new vis.Graph2d(container, dataset, groups, options);
+
+
 
     Plotly.d3.csv("https://raw.githubusercontent.com/ManoaDataVisualizationProject/JAE/master/UHWeekXL.csv", function (err, rows) {
         function unpack(rows, key) {
@@ -117,6 +183,10 @@
 
         var buildingStream = [];
         var buildingStream2 = [];
+        var DELAY = 1000; // delay in ms to add new data points
+        // create a graph2d with an (currently empty) dataset
+
+
 
         window.dates = unpack(rows, 'Access Point ID').splice(4, 151);
         for(var i = 0; i < dates.length; i++){
@@ -198,34 +268,7 @@
         window.gateway = unpack(rows, '30').splice(4, 151).map(function (x) {
             return parseInt(x, 10)
         });
-        var DELAY = 1000; // delay in ms to add new data points
 
-        var strategy = document.getElementById('strategy');
-        //console.log(building.value);
-
-        // create a graph2d with an (currently empty) dataset
-        var container = document.getElementById('visualization');
-        var dataset = new vis.DataSet();
-
-        var options = {
-            legend: true,
-            start: '2018-8-16',//vis.moment().add(-30, 'seconds'), // changed so its faster
-            end: '2018-8-22',
-            dataAxis: {
-                left: {
-                    range: {
-                        min: 0, max: 1500
-                    }
-                }
-            },
-            drawPoints: {
-                style: 'circle' // square, circle
-            },
-            shaded: {
-                orientation: 'bottom' // top, bottom
-            }
-        };
-        var graph2d = new vis.Graph2d(container, dataset, options);
 
         function delayCheck() {
 
@@ -258,6 +301,101 @@
             }
             return ret;
         }
+
+        function groupCheck(build){
+            var ret;
+            switch (build) {
+                case 'admin':
+                    ret = 0;
+                    break;
+                case 'art':
+                    ret = 1;
+                    break;
+                case 'bachman':
+                    ret = 2;
+                    break;
+                case 'campusCenter':
+                    ret = 3;
+                    break;
+                case 'crawford':
+                    ret = 4;
+                    break;
+                case 'eastWest':
+                    ret = 5;
+                    break;
+                case 'gateway':
+                    ret = 6;
+                    break;
+                case 'geophysics':
+                    ret = 7;
+                    break;
+                case 'hamilton':
+                    ret = 8;
+                    break;
+                case 'hawaii':
+                    ret = 9;
+                    break;
+                case 'keller':
+                    ret = 10;
+                    break;
+                case 'kennedy':
+                    ret = 11;
+                    break;
+                case 'koreanStudies':
+                    ret = 12;
+                    break;
+                case 'kuykendallNorth':
+                    ret = 13;
+                    break;
+                case 'kuykendallWest':
+                    ret = 14;
+                    break;
+                case 'lawlibrary':
+                    ret = 15;
+                    break;
+                case 'lawSchool':
+                    ret = 16;
+                    break;
+                case 'oceanography':
+                    ret = 17;
+                    break;
+                case 'physical':
+                    ret = 18;
+                    break;
+                case 'qlcc':
+                    ret = 19;
+                    break;
+                case 'sinclair':
+                    ret = 20;
+                    break;
+                case 'parking':
+                    ret = 21;
+                    break;
+                case 'recCenter':
+                    ret = 22;
+                    break;
+                case 'watanabe':
+                    ret = 23;
+                    break;
+                case 'webster':
+                    ret = 24;
+                    break;
+            }
+            return ret;
+        }
+
+        function resetCheck(){
+            if(reset === 1){
+                graph2d.destroy();
+                reset = 0;
+                dataset = new vis.DataSet();
+                container = document.getElementById('visualization');
+                graph2d = new vis.Graph2d(container, dataset, groups, options);
+                counter = 0;
+                graph2d.setWindow(dates[counter - 12], dates[counter + 12]);
+            }
+        }
+
 
         // a function to generate data points
         function y(x) {
@@ -446,11 +584,8 @@
                 graph2d.setWindow(dates[counter - 12], dates[counter + 12])
             }
             if (now > range.end) {
-                graph2d.setWindow(graph2d.fit(), dates[counter + 24], {animation: false});
+                graph2d.setWindow(graph2d.fit(), dates[counter + 40], {animation: false});
             }
-            //console.log('now' + dates[counter]);
-            console.log(new Date(dates[counter]));
-            console.log('end' + range.end);
             setTimeout(renderStep, DELAY);
 
 
@@ -462,61 +597,46 @@
          * Add a new datapoint to the graph
          */
         function addDataPoint() {
-            // add a new data point to the dataset
-            var now = vis.moment();
-            var yAxis = y(counter);
-            dataset.add({
-                content: 'no',
-                x: dates[counter],
-                y: yAxis,
-                group: 0
-            });
-            console.log(counter);
-            if (counter % 10 === 0 || counter === 0)
-                graph2d.fit();
+            if (go === 0 || counter === 147) {
+                console.log(counter);
+            }
+            else {
+                var y1 = y(counter);
+                var y2 = z(counter);
+                dataset.add({
+                    content: 'no',
+                    x: dates[counter],
+                    y: y1,
+                    group: groupCheck(building.value)
+                });
+                dataset.add({
+                    x: dates[counter],
+                    y: y2,
+                    group: groupCheck(building2.value)
+                });
+                if (counter % 10 === 0 || counter === 0)
+                    graph2d.fit();
 
-            // remove all data points which are no longer visible
-            var range = graph2d.getWindow();
-            var interval = range.end - range.start;
-            var oldIds = dataset.getIds({
-                filter: function (item) {
-                    return item.x < range.start - interval;
-                }
-            });
+                // remove all data points which are no longer visible
+                var range = graph2d.getWindow();
+                var interval = range.end - range.start;
+                var oldIds = dataset.getIds({
+                    filter: function (item) {
+                        return item.x < range.start - interval;
+                    }
+                });
+            }
 
             dataset.remove(oldIds);
             DELAY = delayCheck();
             setTimeout(addDataPoint, DELAY);
+            resetCheck();
         }
-
-        function addDataPoint2() {
-            // add a new data point to the dataset
-            var now = vis.moment();
-            var yAxis = z(counter);
-            dataset.add({
-                x: dates[counter],
-                y: yAxis,
-                group: 1
-            });
-
-            // remove all data points which are no longer visible
-            var range = graph2d.getWindow();
-            var interval = range.end - range.start;
-            var oldIds = dataset.getIds({
-                filter: function (item) {
-                    return item.x < range.start - interval;
-                }
-            });
-            dataset.remove(oldIds);
-            DELAY = delayCheck();
-            if (counter)
-                setTimeout(addDataPoint2, DELAY);
-        }
-
 
         addDataPoint();
-        addDataPoint2();
     })
+
+
 </script>
 </body>
 </html>
