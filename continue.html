@@ -38,9 +38,9 @@
 
 </p>
 <p>
-    <label for="building">Building:</label>
+    <label for="building"></div>Building:</label>
     <select id="building">
-        <option value="admin">Administrative Services</option>
+        <option value="admin">dministrative Services</option>
         <option value="art">Art Building</option>
         <option value="bachman">Bachman</option>
         <option value="campusCenter">Campus Center</option>
@@ -96,8 +96,9 @@
     </select>
 
 </p>
+<button onclick="resetter()">Reset</button>
 <br/>
-<div id="Legend" class="external-legend"></div>
+<br/>
 <div id="visualization"></div>
 
 <script type="text/javascript">
@@ -107,6 +108,35 @@
     var building = document.getElementById('building');
     var building2 = document.getElementById('building2');
     var speed = document.getElementById('refresh');
+    var reset = 0;
+
+    function resetter(){
+        console.log('yoafasdf');
+        reset = 1;
+        return 0;
+    }
+
+    var options = {
+        start: '2018-8-16',//vis.moment().add(-30, 'seconds'), // changed so its faster
+        end: '2018-8-22',
+        dataAxis: {
+            left: {
+                range: {
+                    min: 0, max: 1500
+                }
+            }
+        },
+        drawPoints: {
+            style: 'circle' // square, circle
+        },
+        shaded: {
+            orientation: 'bottom' // top, bottom
+        }
+    };
+
+    var dataset = new vis.DataSet();
+    var container = document.getElementById('visualization');
+    var graph2d = new vis.Graph2d(container, dataset, options);
 
     Plotly.d3.csv("https://raw.githubusercontent.com/ManoaDataVisualizationProject/JAE/master/UHWeekXL.csv", function (err, rows) {
         function unpack(rows, key) {
@@ -117,6 +147,10 @@
 
         var buildingStream = [];
         var buildingStream2 = [];
+        var DELAY = 1000; // delay in ms to add new data points
+        // create a graph2d with an (currently empty) dataset
+
+
 
         window.dates = unpack(rows, 'Access Point ID').splice(4, 151);
         for(var i = 0; i < dates.length; i++){
@@ -198,34 +232,7 @@
         window.gateway = unpack(rows, '30').splice(4, 151).map(function (x) {
             return parseInt(x, 10)
         });
-        var DELAY = 1000; // delay in ms to add new data points
 
-        var strategy = document.getElementById('strategy');
-        //console.log(building.value);
-
-        // create a graph2d with an (currently empty) dataset
-        var container = document.getElementById('visualization');
-        var dataset = new vis.DataSet();
-
-        var options = {
-            legend: true,
-            start: '2018-8-16',//vis.moment().add(-30, 'seconds'), // changed so its faster
-            end: '2018-8-22',
-            dataAxis: {
-                left: {
-                    range: {
-                        min: 0, max: 1500
-                    }
-                }
-            },
-            drawPoints: {
-                style: 'circle' // square, circle
-            },
-            shaded: {
-                orientation: 'bottom' // top, bottom
-            }
-        };
-        var graph2d = new vis.Graph2d(container, dataset, options);
 
         function delayCheck() {
 
@@ -257,6 +264,18 @@
                     break;
             }
             return ret;
+        }
+
+        function resetCheck(){
+            if(reset === 1){
+                graph2d.destroy();
+                reset = 0;
+                dataset = new vis.DataSet();
+                container = document.getElementById('visualization');
+                graph2d = new vis.Graph2d(container, dataset, options);
+                counter = 0;
+                graph2d.setWindow(dates[counter - 12], dates[counter + 12]);
+            }
         }
 
         // a function to generate data points
@@ -484,6 +503,7 @@
                 }
             });
 
+            resetCheck();
             dataset.remove(oldIds);
             DELAY = delayCheck();
             setTimeout(addDataPoint, DELAY);
@@ -514,9 +534,12 @@
         }
 
 
+
         addDataPoint();
         addDataPoint2();
     })
+
+
 </script>
 </body>
 </html>
