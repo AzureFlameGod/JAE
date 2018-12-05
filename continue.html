@@ -7,6 +7,7 @@
     <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/vis/4.21.0/vis.min.js"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/vis/4.21.0/vis.min.css" rel="stylesheet" type="text/css"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.2.2/semantic.min.css">
     <title>Campus Devices by Location | Streaming data</title>
 
     <style type="text/css">
@@ -18,11 +19,9 @@
 
 </head>
 <body>
-<h2>Graph2d | Streaming data</h2>
+<h2>UH Campus Data | Streaming Comparison</h2>
 <p style="max-width: 700px;">
-    This example demonstrates how to apply streaming data input to the Graph2d. The example shows two different ways to
-    let the window move along with the new data, and there are more strategies for that. Note also that it is possible
-    to disable moving and/or zooming the graph by setting options <code>moveable</code> and <code>zoomable</code> false.
+   This visualization takes in a constant stream of data and relates into another data stream. Built using vis.js.
 </p>
 
 <p>
@@ -40,7 +39,7 @@
 <p>
     <label for="building"></div>Building:</label>
     <select id="building">
-        <option value="admin">dministrative Services</option>
+        <option value="admin">Administrative Services</option>
         <option value="art">Art Building</option>
         <option value="bachman">Bachman</option>
         <option value="campusCenter">Campus Center</option>
@@ -96,7 +95,7 @@
     </select>
 
 </p>
-<button onclick="resetter()">Reset</button>
+<button class="button" style="margin-left:10px" onclick="resetter()">Reset</button>
 <br/>
 <br/>
 <div id="visualization"></div>
@@ -562,7 +561,7 @@
                 graph2d.setWindow(dates[counter - 12], dates[counter + 12])
             }
             if (now > range.end) {
-                graph2d.setWindow(graph2d.fit(), dates[counter + 24], {animation: false});
+                graph2d.setWindow(graph2d.fit(), dates[counter + 40], {animation: false});
             }
             //console.log('now' + dates[counter]);
             console.log(new Date(dates[counter]));
