@@ -16,7 +16,7 @@ Plotly.d3.csv("https://raw.githubusercontent.com/ManoaDataVisualizationProject/J
         var parking         = unpack(rows, '8').splice(4, 151).map(function(x){ return parseInt(x, 10)});
         var crawford        = unpack(rows, '9').splice(4, 151).map(function(x){ return parseInt(x, 10)});
         var hawaii          = unpack(rows, '10').splice(4, 151).map(function(x){ return parseInt(x, 10)});
-        var qlcc            = unpack(rows, '11').splice(4, 151).map(function(x){ return parseI nt(x, 10)});
+        var qlcc            = unpack(rows, '11').splice(4, 151).map(function(x){ return parseInt(x, 10)});
         var kennedy         = unpack(rows, '12').splice(4, 151).map(function(x){ return parseInt(x, 10)});
         var hamilton        = unpack(rows, '13').splice(4, 151).map(function(x){ return parseInt(x, 10)});
         var keller          = unpack(rows, '14').splice(4, 151).map(function(x){ return parseInt(x, 10)});
@@ -33,29 +33,19 @@ Plotly.d3.csv("https://raw.githubusercontent.com/ManoaDataVisualizationProject/J
         var gateway         = unpack(rows, '30').splice(4, 151).map(function(x){ return parseInt(x, 10)});
         var colors = Highcharts.getOptions().colors;
         Highcharts.chart('container3', {
-            chart: {
-                type: 'streamgraph',
-                marginBottom: 0,
-                zoomType: 'x'
-            },
-            colors: [
-                colors[0],
-                colors[1],
-                colors[2],
-                colors[3],
-                colors[4]
-            ],
-            title: {
+			title: {
                 floating: true,
                 align: 'center',
                 text: 'Campus Traffic'
+			},
+			
+            chart: {
+            type: 'tilemap',
+            inverted: true,
+            height: '80%'
             },
-            xAxis: {
-                maxPadding: 0,
-                type: 'category',
-                crosshair: true,
-                categories: dates
-            },
+            
+          
             series: [{
                 name: 'Bachman',
                 data: bachman
