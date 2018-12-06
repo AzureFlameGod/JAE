@@ -24,7 +24,36 @@
       </div>
     </div>
     <div class="four wide column">
-      <div id="chartdiv"></div>
+      <p class="selector">
+        <select onchange="setDataSet(this.options[this.selectedIndex].value);">
+          <option value="https://raw.githubusercontent.com/mserai/ICS484/master/Art.csv">Art Building</option>
+          <option value="https://raw.githubusercontent.com/mserai/ICS484/master/Bach.csv">Bachman Hall</option>
+          <option value="https://raw.githubusercontent.com/mserai/ICS484/master/Campus.csv">Campus Center</option>
+          <option value="https://raw.githubusercontent.com/mserai/ICS484/master/Crawford.csv">Crawford Hall</option>
+          <option value="https://raw.githubusercontent.com/mserai/ICS484/master/EastWest.csv">East West Center</option>
+          <option value="https://raw.githubusercontent.com/mserai/ICS484/master/Gatewau.csv">Gateway</option>
+          <option value="https://raw.githubusercontent.com/mserai/ICS484/master/Hawaii.csv">Hawaii Institute</option>
+          <option value="https://raw.githubusercontent.com/mserai/ICS484/master/HawaiiHall.csv">Hawaii Hall</option>
+          <option value="https://raw.githubusercontent.com/mserai/ICS484/master/Keller.csv">Keller Hall</option>
+          <option value="https://raw.githubusercontent.com/mserai/ICS484/master/Kennedy.csv">Kennedy Theater</option>
+          <option value="https://raw.githubusercontent.com/mserai/ICS484/master/Korean.csv">Korean</option>
+          <option value="https://raw.githubusercontent.com/mserai/ICS484/master/Kuy.csv">Kuykendall</option>
+          <option value="https://raw.githubusercontent.com/mserai/ICS484/master/Kuyken.csv">Kuykendall 2</option>
+          <option value="https://raw.githubusercontent.com/mserai/ICS484/master/LawL.csv">Law Library</option>
+          <option value="https://raw.githubusercontent.com/mserai/ICS484/master/LawS.csv">Law School</option>
+          <option value="https://raw.githubusercontent.com/mserai/ICS484/master/Micro.csv">Microbial</option>
+          <option value="https://raw.githubusercontent.com/mserai/ICS484/master/Physical.csv">Physical Building</option>
+          <option value="https://raw.githubusercontent.com/mserai/ICS484/master/Queen.csv">Queen Liliuokalani</option>
+          <option value="https://raw.githubusercontent.com/mserai/ICS484/master/Sinclair.csv">Sinclair Library</option>
+          <option value="https://raw.githubusercontent.com/mserai/ICS484/master/Warrior.csv">Warrior Recreation</option>
+          <option value="https://raw.githubusercontent.com/mserai/ICS484/master/Watanabe.csv">Watanabe Hall</option>
+          <option value="https://raw.githubusercontent.com/mserai/ICS484/master/Webster.csv">Webster Hall</option>
+          <option value="https://raw.githubusercontent.com/mserai/ICS484/master/admin.csv">Administration Building</option>
+        </select> &lt; Select a data set
+      </p>
+      <div id="chartdiv" style="width: 400px;height: 400px"></div>
+    </div>
+</div>
     </div>
   <div class="eight wide column" style="border-color: black">
     <div class="ui container">
@@ -41,8 +70,8 @@
         </div>
       </div>
     </div>
+    <div class="eight wide column">
     <div class="ui container">
-
     </div>
   </div>
 </div>
@@ -176,7 +205,7 @@
 
           var layout = {
             height: 400,
-            width: 900,
+            width: 900
           };
 
           Plotly.newPlot(plots1, data, layout);
@@ -208,12 +237,11 @@
         /**
          * Load CSV data
          */
-        AmCharts.loadFile("https://raw.githubusercontent.com/mserai/ICS484/master/UHFinal.csv", {}, function (response) {
-
+        AmCharts.loadFile("https://raw.githubusercontent.com/mserai/ICS484/master/UHFinal.csv", {}, function (dataset_url) {
           /**
            * Parse loaded CSV
            */
-          var radialData = AmCharts.parseCSV(response, {
+          var radialData = AmCharts.parseCSV(dataset_url, {
             "separator": ",",
             "useColumnNames": true,
             //"useRowNames": true,
@@ -233,8 +261,8 @@
           for (var i = 0; i < radialData.length; i++) {
             var dataItem = radialData[i];
             var accessPoint = dataItem.name;
-            if (dataItem.name === "Webster Hall") {
-              data.push({ category: dataItem.date, value: dataItem.total});
+            if (dataItem.name === "Art Building") {
+              data.push({ category: dataItem.date, value: dataItem.total });
             }
           }
 
@@ -286,10 +314,19 @@
           chart.cursor = new am4charts.RadarCursor();
           chart.cursor.innerRadius = am4core.percent(50);
           chart.cursor.lineY.disabled = true;
-        })
+
+          function setDataSet(dataset_url) {
+            chart.dataProvider =  AmCharts.loadFile(dataset_url);
+            chart.validateData();
+            //heatmap.validateDate();
+
+          }
+
         })
       })
-    });
+    })
+      });
+
 
 </script>
 </body>
